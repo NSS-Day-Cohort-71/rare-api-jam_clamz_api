@@ -31,23 +31,20 @@ class JSONServer(HandleRequests):
 
         url = self.parse_url(self.path)
 
-        # Get the request body JSON for the new data
-        content_len = int(self.headers.get("content-length", 0))
-        request_body = self.rfile.read(content_len)
-        request_body = json.loads(request_body)
-
         if url["requested_resource"] == "register":
-            successfully_created = create_user(request_body)
-            if successfully_created:
-                return self.response(
-                    "Your account has been created.",
-                    status.HTTP_201_SUCCESS_CREATED.value,
-                )
-            else:
-                return self.response(
-                    "Your account could not be created.",
-                    status.HTTP_500_SERVER_ERROR.value,
-                )
+            # Get the request body JSON for the new data
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            request_body = json.loads(request_body)
+
+            response_body = create_user(request_body)
+            return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
+
+        else:
+            return self.response(
+                "Resource not found. Please check your request URL.",
+                status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+            )
 
     def do_DELETE(self):
         """Handle DELETE requests"""
