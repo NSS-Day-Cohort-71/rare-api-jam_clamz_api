@@ -11,7 +11,8 @@ from views import (
     get_user,
     create_post,
     get_posts_by_user_id,
-), create_category
+    create_category,
+)
 
 
 class JSONServer(HandleRequests):
@@ -63,7 +64,7 @@ class JSONServer(HandleRequests):
 
             response_body = login_user(request_body)
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
-        
+
         elif url["requested_resource"] == "category":
             # Get the request body JSON for the new data
             content_len = int(self.headers.get("content-length", 0))
@@ -120,4 +121,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
