@@ -12,14 +12,16 @@ def get_all_posts():
         db_cursor.execute(
             """
         SELECT
+            p.id,
             p.title,
             u.first_name,
             u.last_name, 
-            c.label,
+            c.label
         FROM Posts p
         JOIN Users u ON u.id = p.user_id
         JOIN Categories c ON c.id = p.category_id
-        WHERE p.approved = 1;
+        WHERE p.approved = 1
+        ORDER BY p.publication_date DESC;
         """
         )
         query_results = db_cursor.fetchall()
