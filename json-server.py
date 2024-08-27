@@ -47,6 +47,10 @@ class JSONServer(HandleRequests):
             response_body = get_all_categories()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
+        elif url["requested_resource"] == "category":
+            response_body = get_all_categories()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
     def do_POST(self):
         """Handle POST requests"""
 
