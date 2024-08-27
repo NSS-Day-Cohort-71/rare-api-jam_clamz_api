@@ -3,7 +3,7 @@ from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 
 # non-boilerplate import
-from views import create_user, login_user
+from views import create_user, login_user, get_all_posts
 
 
 class JSONServer(HandleRequests):
@@ -25,6 +25,9 @@ class JSONServer(HandleRequests):
                     "User does not exist in the database. Please register your account.",
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
+        elif url["requested_resource"] == "Posts":
+            response_body = get_all_posts()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
     def do_POST(self):
         """Handle POST requests"""
