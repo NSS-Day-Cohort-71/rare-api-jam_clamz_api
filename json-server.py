@@ -10,6 +10,7 @@ from views import (
     get_all_posts,
     get_user,
     create_post,
+    get_posts_by_user_id,
     create_category,
     get_all_categories,
 )
@@ -35,8 +36,12 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
         elif url["requested_resource"] == "Posts":
-            response_body = get_all_posts()
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            if url["pk"]:
+                response_body = get_posts_by_user_id(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            else:
+                response_body = get_all_posts()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         elif url["requested_resource"] == "category":
             response_body = get_all_categories()
