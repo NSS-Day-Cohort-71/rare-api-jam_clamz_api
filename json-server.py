@@ -40,6 +40,15 @@ class JSONServer(HandleRequests):
             response_body = create_user(request_body)
             return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
 
+        elif url["requested_resource"] == "login":
+            # Get the request body JSON for the new data
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            request_body = json.loads(request_body)
+
+            response_body = login_user(request_body)
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
         else:
             return self.response(
                 "Resource not found. Please check your request URL.",
