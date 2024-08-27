@@ -72,3 +72,5 @@ def create_post(data):
         conn.commit()
 
     return json.dumps({"message": "Post created successfully"})
+
+#test
