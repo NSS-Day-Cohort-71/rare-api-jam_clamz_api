@@ -75,4 +75,39 @@ def create_post(data):
 
     return json.dumps({"message": "Post created successfully"})
 
-#test
+
+def get_posts_by_user_id(user_id):
+    """
+    Args:
+        user_id (int): The user ID to filter posts by
+
+    Returns:
+        json string: A JSON string containing the list of posts with user details
+    """
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the posts by user ID with expanded user details
+        db_cursor.execute(
+            """
+            SELECT
+                p.id,
+                p.title,
+                p.content,
+                u.first_name,
+                u.last_name, 
+                c.label
+            FROM Posts p
+            JOIN Users u ON u.id = p.user_id
+            JOIN Categories c ON c.id = p.category_id
+            WHERE p.user_id = ?;
+            """,
+            (user_id,),
+        )
+        query_results = db_cursor.fetchall()
+
+        # Serialize Python dictionary to JSON encoded string
+        serialized_posts = json.dumps([dict(row) for row in query_results])
+
+    return serialized_posts

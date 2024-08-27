@@ -4,7 +4,14 @@ from nss_handler import HandleRequests, status
 
 # non-boilerplate import
 
-from views import create_user, login_user, get_all_posts, get_user, create_post, create_category
+from views import (
+    create_user,
+    login_user,
+    get_all_posts,
+    get_user,
+    create_post,
+    get_posts_by_user_id,
+), create_category
 
 
 class JSONServer(HandleRequests):
@@ -27,8 +34,12 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
         elif url["requested_resource"] == "Posts":
-            response_body = get_all_posts()
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            if url["pk"]:
+                response_body = get_posts_by_user_id(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            else:
+                response_body = get_all_posts()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
     def do_POST(self):
         """Handle POST requests"""
