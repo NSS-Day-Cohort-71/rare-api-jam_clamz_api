@@ -3,7 +3,8 @@ from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 
 # non-boilerplate import
-from views import create_user, login_user
+from views import create_user, login_user, create_category
+
 
 
 class JSONServer(HandleRequests):
@@ -47,6 +48,15 @@ class JSONServer(HandleRequests):
             request_body = json.loads(request_body)
 
             response_body = login_user(request_body)
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        elif url["requested_resource"] == "category":
+            # Get the request body JSON for the new data
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            request_body = json.loads(request_body)
+
+            response_body = create_category(request_body)
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         else:
