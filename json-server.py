@@ -3,7 +3,7 @@ from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 
 # non-boilerplate import
-from views import create_user, login_user, get_all_posts
+from views import create_user, login_user, get_all_posts, get_user, create_post
 
 
 class JSONServer(HandleRequests):
@@ -17,7 +17,7 @@ class JSONServer(HandleRequests):
 
         if url["requested_resource"] == "Users":
             if url["pk"]:
-                response_body = login_user(url["pk"])
+                response_body = get_user(url["pk"])
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
             else:
@@ -51,6 +51,15 @@ class JSONServer(HandleRequests):
 
             response_body = login_user(request_body)
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        elif url["requested_resource"] == "Posts":
+            # Get the request body JSON for the new post
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            request_body = json.loads(request_body)
+
+            response_body = create_post(request_body)
+            return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
 
         else:
             return self.response(

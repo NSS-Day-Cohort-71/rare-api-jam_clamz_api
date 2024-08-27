@@ -68,3 +68,45 @@ def create_user(user):
         id = db_cursor.lastrowid
 
         return json.dumps({"token": id, "valid": True})
+
+
+def get_user(pk):
+    """Retrieves a user from the database by primary key (id)
+
+    Args:
+        pk (int): The primary key of the user to retrieve
+
+    Returns:
+        json string: Contains the user data if found, otherwise indicates the user was not found
+    """
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            SELECT id, first_name, last_name, username, email, bio, created_on, active
+            FROM Users
+            WHERE id = ?
+            """,
+            (pk,),
+        )
+
+        user_from_db = db_cursor.fetchone()
+
+        if user_from_db is not None:
+            user = {
+                "id": user_from_db["id"],
+                "first_name": user_from_db["first_name"],
+                "last_name": user_from_db["last_name"],
+                "username": user_from_db["username"],
+                "email": user_from_db["email"],
+                "bio": user_from_db["bio"],
+                "created_on": user_from_db["created_on"],
+                "active": user_from_db["active"],
+            }
+            response = {"found": True, "user": user}
+        else:
+            response = {"found": False}
+
+        return json.dumps(response)
