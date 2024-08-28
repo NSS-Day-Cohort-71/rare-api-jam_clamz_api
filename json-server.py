@@ -10,6 +10,7 @@ from views import (
     get_all_posts,
     get_user,
     create_post,
+    get_posts_by_user_id,
     create_category,
     get_all_categories,
 )
@@ -35,8 +36,35 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
         elif url["requested_resource"] == "Posts":
-            response_body = get_all_posts()
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            if url["pk"]:
+                pass
+                # Saving this area for post details request
+            else:
+                response_body = get_all_posts()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        elif url["requested_resource"] == "My-Posts":
+            user_id = url["query_params"].get("userId")
+            if user_id:
+                # Extract the user ID from the list
+                if isinstance(user_id, list):
+                    user_id = user_id[0] if user_id else None
+
+                # Try to convert to integer
+                try:
+                    user_id = int(user_id)
+                except ValueError:
+                    return self.response(
+                        json.dumps({"error": "Invalid user ID"}),
+                        status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value,
+                    )
+
+                response_body = get_posts_by_user_id(user_id)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            else:
+                return self.response(
+                    json.dumps({"error": "UserId is required for My-Posts request."}),
+                    status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value,
+                )
 
         elif url["requested_resource"] == "category":
             response_body = get_all_categories()
