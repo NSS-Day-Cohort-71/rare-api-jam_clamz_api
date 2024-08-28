@@ -4,7 +4,15 @@ from nss_handler import HandleRequests, status
 
 # non-boilerplate import
 
-from views import create_user, login_user, get_all_posts, get_user, create_post, create_category
+from views import (
+    create_user,
+    login_user,
+    get_all_posts,
+    get_user,
+    create_post,
+    create_category,
+    get_all_categories,
+)
 
 
 class JSONServer(HandleRequests):
@@ -30,6 +38,10 @@ class JSONServer(HandleRequests):
             response_body = get_all_posts()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
+        elif url["requested_resource"] == "category":
+            response_body = get_all_categories()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
     def do_POST(self):
         """Handle POST requests"""
 
@@ -52,7 +64,7 @@ class JSONServer(HandleRequests):
 
             response_body = login_user(request_body)
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
-        
+
         elif url["requested_resource"] == "category":
             # Get the request body JSON for the new data
             content_len = int(self.headers.get("content-length", 0))
@@ -109,4 +121,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
