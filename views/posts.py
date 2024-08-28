@@ -84,6 +84,7 @@ def get_posts_by_user_id(user_id):
     Returns:
         json string: A JSON string containing the list of posts with user details
     """
+    # Extract the user_id from the list if it's in that format
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
