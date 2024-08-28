@@ -13,6 +13,7 @@ from views import (
     get_posts_by_user_id,
     create_category,
     get_all_categories,
+    delete_category,
 )
 
 
@@ -100,7 +101,7 @@ class JSONServer(HandleRequests):
             request_body = json.loads(request_body)
 
             response_body = create_category(request_body)
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
 
         elif url["requested_resource"] == "Posts":
             # Get the request body JSON for the new post
@@ -123,7 +124,13 @@ class JSONServer(HandleRequests):
         url = self.parse_url(self.path)
         pk = url["pk"]
 
-        pass
+        if url["requested_resource"] == "category":
+            if pk != 0:
+                successfully_deleted = delete_category(pk)
+                if successfully_deleted:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
+                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
     def do_PUT(self):
         """Handle PUT requests"""
