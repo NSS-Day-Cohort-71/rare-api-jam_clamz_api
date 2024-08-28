@@ -83,12 +83,14 @@ def create_post(data):
         db_cursor.execute(
             """
         INSERT INTO Posts (title, content, category_id, publication_date, image_url, user_id, approved)
-        VALUES (?, ?, (SELECT id FROM Categories WHERE label = ?), ?, ?, (SELECT id FROM Users WHERE first_name = ?), ?)
+        VALUES (?, ?, ?, ?, ?, (SELECT id FROM Users WHERE first_name = ?), ?)
         """,
             (
                 data["title"],
                 data["content"],
-                data["category"],
+                data[
+                    "category"
+                ],  # Here we directly use the categoryId passed from the front end
                 data["publicationDate"],
                 data["headerImageUrl"],
                 data["author"],
