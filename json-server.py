@@ -38,8 +38,8 @@ class JSONServer(HandleRequests):
                 )
         elif url["requested_resource"] == "Posts":
             if url["pk"]:
-                pass
-                # Saving this area for post details request
+                response_body = get_post_by_id(url['pk'])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
             else:
                 response_body = get_all_posts()
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)

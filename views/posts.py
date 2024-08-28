@@ -47,7 +47,7 @@ def get_post_by_id(post_id):
                 p.title,
                 p.image_url,
                 p.content, 
-                p.publication_date,
+                strftime('%m/%d/%Y', p.publication_date) as publication_date,
                 u.first_name,
                 u.last_name
             FROM Posts p
