@@ -13,6 +13,7 @@ from views import (
     get_posts_by_user_id,
     create_category,
     get_all_categories,
+    get_post_by_id
 )
 
 

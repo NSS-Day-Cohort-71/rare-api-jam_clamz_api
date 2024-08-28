@@ -36,6 +36,32 @@ def get_all_posts():
 
     return serialized_posts
 
+def get_post_by_id(post_id):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            SELECT 
+                p.title,
+                p.image_url,
+                p.content, 
+                p.publication_date,
+                u.first_name,
+                u.last_name
+            FROM Posts p
+            JOIN Users u ON u.id = p.user_id
+            WHERE p.id = ?
+            """
+            ,(post_id,)
+        )
+
+        query_results = db_cursor.fetchone()
+
+        result = dict(query_results) if query_results else None
+
+    return json.dumps(result)
 
 def create_post(data):
     """
