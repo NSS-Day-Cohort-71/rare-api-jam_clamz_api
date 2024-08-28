@@ -95,3 +95,6 @@ INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image
 INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved') VALUES (1, 1, "not approved", datetime('now'), 'example.png', 'blah blah blah', 0);
 INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved') VALUES (1, 1, "second", datetime('now'), 'example.png', 'blah blah blah', 1);
 INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved') VALUES (1, 1, "third", datetime('now'), 'example.png', 'blah blah blah', 1);
+
+-- test
+INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved') VALUES (3, 1, "third", datetime('now'), 'example.png', 'blah blah blah', 1);

@@ -55,7 +55,7 @@ class JSONServer(HandleRequests):
                 except ValueError:
                     return self.response(
                         json.dumps({"error": "Invalid user ID"}),
-                        status.HTTP_400_CLIENT_ERROR_BAD_REQUEST.value,
+                        status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value,
                     )
 
                 response_body = get_posts_by_user_id(user_id)
@@ -63,12 +63,8 @@ class JSONServer(HandleRequests):
             else:
                 return self.response(
                     json.dumps({"error": "UserId is required for My-Posts request."}),
-                    status.HTTP_400_CLIENT_ERROR_BAD_REQUEST.value,
+                    status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value,
                 )
-
-        elif url["requested_resource"] == "category":
-            response_body = get_all_categories()
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         elif url["requested_resource"] == "category":
             response_body = get_all_categories()
