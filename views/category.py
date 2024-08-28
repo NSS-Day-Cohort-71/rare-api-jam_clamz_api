@@ -49,3 +49,17 @@ def get_all_categories():
         serialized_categories = json.dumps(categories)
 
     return serialized_categories
+
+def delete_category(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        DELETE FROM Categories WHERE id = ?
+        """, (pk,)
+        )
+        number_of_rows_deleted = db_cursor.rowcount
+
+    return True if number_of_rows_deleted > 0 else False
