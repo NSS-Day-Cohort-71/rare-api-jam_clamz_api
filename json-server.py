@@ -15,7 +15,7 @@ from views import (
     get_all_categories,
     delete_category,
     get_post_by_id,
-    edit_post,,
+    edit_post,
     delete_post
 )
 
@@ -135,7 +135,7 @@ class JSONServer(HandleRequests):
 
                 return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
             
-        elif url["requested_resource"] == "posts":
+        elif url["requested_resource"] == "Posts":
             if pk != 0:
                 successfully_deleted = delete_post(pk)
                 if successfully_deleted:
