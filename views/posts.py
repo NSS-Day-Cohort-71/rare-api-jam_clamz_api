@@ -145,6 +145,10 @@ def get_posts_by_user_id(user_id):
     return serialized_posts
 
 
+import sqlite3
+import json
+
+
 def edit_post(post_id, data):
     """
     Args:
@@ -172,20 +176,21 @@ def edit_post(post_id, data):
                 print(f"Error: '{key}' key is missing from the data dictionary")
                 return json.dumps({"error": f"'{key}' key is missing"})
 
-        # Write the SQL query to update the post
-        db_cursor.execute(
-            """
+        query = """
             UPDATE Posts
             SET 
                 title = ?,
                 content = ?,
-                category_id = (SELECT id FROM Categories WHERE label = ?),
+                category_id = ?,
                 publication_date = ?,
                 image_url = ?,
                 user_id = (SELECT id FROM Users WHERE first_name = ?),
                 approved = ?
             WHERE id = ?
-            """,
+        """
+
+        db_cursor.execute(
+            query,
             (
                 data["title"],
                 data["content"],
@@ -201,4 +206,8 @@ def edit_post(post_id, data):
         # Commit the transaction
         conn.commit()
 
-    return json.dumps({"message": "Post updated successfully"})
+        # Verify the update
+        db_cursor.execute("SELECT * FROM Posts WHERE id = ?", (post_id,))
+        updated_post = db_cursor.fetchone()
+
+    return json.dumps({"message": "Post updated successfully."})
