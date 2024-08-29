@@ -5,5 +5,6 @@ from .posts import (
     get_posts_by_user_id,
     get_post_by_id,
     edit_post,
+    delete_post
 )
 from .category import create_category, get_all_categories, delete_category
