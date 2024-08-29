@@ -14,6 +14,7 @@ def get_all_posts():
         SELECT
             p.id,
             p.title,
+            p.user_id,
             u.first_name,
             u.last_name, 
             c.label
@@ -48,7 +49,8 @@ def get_post_by_id(post_id):
                 p.title,
                 p.image_url,
                 p.category_id,
-                p.content, 
+                p.content,
+                p.user_id, 
                 strftime('%m/%d/%Y', p.publication_date) as publication_date,
                 u.first_name,
                 u.last_name
