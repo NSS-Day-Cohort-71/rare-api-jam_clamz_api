@@ -14,7 +14,8 @@ from views import (
     create_category,
     get_all_categories,
     delete_category,
-    get_post_by_id
+    get_post_by_id,
+    edit_post,
 )
 
 
@@ -39,7 +40,7 @@ class JSONServer(HandleRequests):
                 )
         elif url["requested_resource"] == "Posts":
             if url["pk"]:
-                response_body = get_post_by_id(url['pk'])
+                response_body = get_post_by_id(url["pk"])
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
             else:
                 response_body = get_all_posts()
@@ -129,21 +130,35 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_deleted = delete_category(pk)
                 if successfully_deleted:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
 
-                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+                return self.response(
+                    "Requested resource not found",
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
 
     def do_PUT(self):
         """Handle PUT requests"""
 
         url = self.parse_url(self.path)
+        pk = url["pk"]
 
         # Get the request body JSON for the new data
         content_len = int(self.headers.get("content-length", 0))
         request_body = self.rfile.read(content_len)
         request_body = json.loads(request_body)
 
-        pass
+        if url["requested_resource"] == "Posts":
+            if pk != 0:
+                response_body = edit_post(pk, request_body)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        return self.response(
+            "Resource not found. Please check your request URL.",
+            status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+        )
 
 
 #
