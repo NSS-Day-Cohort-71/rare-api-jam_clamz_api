@@ -15,8 +15,10 @@ from views import (
     get_all_categories,
     delete_category,
     get_post_by_id,
+    edit_category,
     edit_post,
     delete_post
+
 )
 
 
@@ -131,8 +133,9 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_deleted = delete_category(pk)
                 if successfully_deleted:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
-
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
                 return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
             
         elif url["requested_resource"] == "Posts":
@@ -142,6 +145,7 @@ class JSONServer(HandleRequests):
                     return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
                 
                 return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+
 
     def do_PUT(self):
         """Handle PUT requests"""
@@ -154,9 +158,11 @@ class JSONServer(HandleRequests):
         request_body = self.rfile.read(content_len)
         request_body = json.loads(request_body)
 
-        if url["requested_resource"] == "Posts":
+
+        if url["requested_resource"] == "category":
             if pk != 0:
-                response_body = edit_post(pk, request_body)
+                response_body = edit_category(pk, request_body)
+
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         return self.response(
