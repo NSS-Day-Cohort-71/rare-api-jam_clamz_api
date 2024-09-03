@@ -16,9 +16,8 @@ from views import (
     delete_category,
     get_post_by_id,
     edit_category,
-    edit_post,
-    delete_post
-
+    delete_post,
+    create_comment
 )
 
 
@@ -115,6 +114,15 @@ class JSONServer(HandleRequests):
             request_body = json.loads(request_body)
 
             response_body = create_post(request_body)
+            return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
+        
+        elif url["requested_resource"] == "Comments":
+            # Get the request body JSON for the new post
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            request_body = json.loads(request_body)
+
+            response_body = create_comment(request_body)
             return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
 
         else:

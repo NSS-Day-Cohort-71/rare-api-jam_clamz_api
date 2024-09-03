@@ -16,3 +16,5 @@ from .posts import (
     edit_post,
     delete_post
 )
+
+from .comment import create_comment
