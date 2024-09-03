@@ -98,3 +98,5 @@ INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image
 
 -- test
 INSERT INTO Posts ('user_id', 'category_id', 'title', 'publication_date', 'image_url', 'content', 'approved') VALUES (3, 1, "third", datetime('now'), 'example.png', 'blah blah blah', 1);
+
+ALTER TABLE Comments ADD "date" date;
