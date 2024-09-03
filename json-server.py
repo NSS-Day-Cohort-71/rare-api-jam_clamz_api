@@ -16,8 +16,10 @@ from views import (
     delete_category,
     get_post_by_id,
     edit_category,
+    edit_post,
     delete_post,
-    create_comment
+    get_comments_by_post_id,
+    create_comment,
 )
 
 
@@ -75,6 +77,21 @@ class JSONServer(HandleRequests):
             response_body = get_all_categories()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
+        elif url["requested_resource"] == "Comments":
+            post_id = url["query_params"].get("post_id")
+            if post_id:
+                # this ensures post_id is a single value
+                if isinstance(post_id, list):
+                    post_id = post_id[0] if post_id else None
+
+                response_body = get_comments_by_post_id(post_id)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            else:
+                return self.response(
+                    json.dumps({"error": "post_id is required for Comments request."}),
+                    status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value,
+                )
+
     def do_POST(self):
         """Handle POST requests"""
 
@@ -115,7 +132,7 @@ class JSONServer(HandleRequests):
 
             response_body = create_post(request_body)
             return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
-        
+
         elif url["requested_resource"] == "Comments":
             # Get the request body JSON for the new post
             content_len = int(self.headers.get("content-length", 0))
@@ -144,16 +161,23 @@ class JSONServer(HandleRequests):
                     return self.response(
                         "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
                     )
-                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
-            
+                return self.response(
+                    "Requested resource not found",
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
+
         elif url["requested_resource"] == "Posts":
             if pk != 0:
                 successfully_deleted = delete_post(pk)
                 if successfully_deleted:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
-                
-                return self.response("Requested resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
 
+                return self.response(
+                    "Requested resource not found",
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
 
     def do_PUT(self):
         """Handle PUT requests"""
@@ -166,17 +190,22 @@ class JSONServer(HandleRequests):
         request_body = self.rfile.read(content_len)
         request_body = json.loads(request_body)
 
-
         if url["requested_resource"] == "category":
             if pk != 0:
                 response_body = edit_category(pk, request_body)
 
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
-        return self.response(
-            "Resource not found. Please check your request URL.",
-            status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
-        )
+        elif url["requested_resource"] == "Posts":
+            if pk != 0:
+                response_body = edit_post(pk, request_body)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        else:
+            self.response(
+                "Resource not found. Please check your request URL.",
+                status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+            )
 
 
 #

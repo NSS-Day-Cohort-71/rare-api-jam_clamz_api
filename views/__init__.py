@@ -14,7 +14,7 @@ from .posts import (
     get_posts_by_user_id,
     get_post_by_id,
     edit_post,
-    delete_post
+    delete_post,
 )
 
-from .comment import create_comment
+from .comment import create_comment, get_comments_by_post_id
