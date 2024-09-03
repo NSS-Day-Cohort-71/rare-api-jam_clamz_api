@@ -20,6 +20,7 @@ from views import (
     delete_post,
     get_comments_by_post_id,
     create_comment,
+    create_tag,
 )
 
 
@@ -131,6 +132,15 @@ class JSONServer(HandleRequests):
             request_body = json.loads(request_body)
 
             response_body = create_post(request_body)
+            return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
+        
+        elif url["requested_resource"] == "tags":
+            # Get the request body JSON for the new data
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            request_body = json.loads(request_body)
+
+            response_body = create_tag(request_body)
             return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
 
         elif url["requested_resource"] == "Comments":

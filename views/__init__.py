@@ -19,3 +19,7 @@ from .posts import (
 
 from .comments import get_comments_by_post_id
 from .comment import create_comment
+
+from .tags import (
+    create_tag,
+)
