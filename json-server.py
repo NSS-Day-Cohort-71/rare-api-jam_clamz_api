@@ -23,7 +23,8 @@ from views import (
     create_tag,
     delete_comment,
     get_comment_by_id,
-    edit_comment
+    edit_comment,
+    edit_tag
 )
 
 
@@ -235,6 +236,11 @@ class JSONServer(HandleRequests):
         elif url["requested_resource"] == "Comments":
             if pk != 0:
                 response_body = edit_comment(pk, request_body)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+        elif url["requested_resource"] == "Tags":
+            if pk != 0:
+                response_body = edit_tag(pk, request_body)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         else:

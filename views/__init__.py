@@ -27,4 +27,5 @@ from .comments import (
 
 from .tags import (
     create_tag,
+    edit_tag
 )
