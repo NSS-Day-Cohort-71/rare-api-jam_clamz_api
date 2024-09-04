@@ -18,7 +18,7 @@ from .posts import (
 )
 
 from .comments import get_comments_by_post_id, delete_comment
-from .comment import create_comment, get_comment_by_id
+from .comment import create_comment, get_comment_by_id, edit_comment
 
 from .tags import (
     create_tag,

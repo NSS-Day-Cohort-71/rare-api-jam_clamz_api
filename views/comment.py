@@ -61,3 +61,30 @@ def get_comment_by_id(comment_id):
             response = None
 
         return json.dumps(response)
+    
+
+def edit_comment(comment_id, data):
+
+    content = data['content']
+
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+                UPDATE Comments 
+                SET 
+                    content = ?
+                WHERE id = ?
+            """, (content, comment_id,),
+        )    
+
+        conn.commit()
+
+    return json.dumps({"message": "Comment updated successfully."})    
+
+        
+
+
+
+
