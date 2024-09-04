@@ -40,3 +40,23 @@ def get_comments_by_post_id(post_id):
             comments.append(comment)
 
     return json.dumps(comments)
+
+
+def delete_comment(comment_id):
+    """Delete a comment by id"""
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            DELETE FROM Comments
+            WHERE id = ?
+            """,
+            (comment_id,),
+        )
+
+        conn.commit()
+
+        number_of_rows_deleted = db_cursor.rowcount
+
+    return True if number_of_rows_deleted > 0 else False
