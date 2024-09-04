@@ -22,6 +22,7 @@ from views import (
     create_comment,
     create_tag,
     delete_comment,
+    get_comment_by_id
 )
 
 
@@ -81,12 +82,18 @@ class JSONServer(HandleRequests):
 
         elif url["requested_resource"] == "Comments":
             post_id = url["query_params"].get("post_id")
+            pk = url['pk']
+
             if post_id:
                 # this ensures post_id is a single value
                 if isinstance(post_id, list):
                     post_id = post_id[0] if post_id else None
 
                 response_body = get_comments_by_post_id(post_id)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+            elif pk:
+                response_body = get_comment_by_id(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
             else:
                 return self.response(
