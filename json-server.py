@@ -29,6 +29,7 @@ from views import (
     get_all_tags,
     get_tags_for_post,
     save_post_tags,
+    get_tag_by_id
 )
 
 
@@ -87,14 +88,25 @@ class JSONServer(HandleRequests):
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
         
         elif url["requested_resource"] == "tags":
-            response_body = get_all_tags()
-            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            tag_id = url["pk"]
+
+            if tag_id:
+                if isinstance(tag_id, list):
+                    tag_id = tag_id[0] if tag_id else None
+
+                response_body = get_tag_by_id(tag_id)
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+            else:    
+                response_body = get_all_tags()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         if url["requested_resource"] == "posttags":
             post_id = url["query_params"].get("post_id", None)
-        if post_id:
-            response = get_tags_for_post(post_id[0])  # Fetch the tags for the specific post
-            return self.response(response, status.HTTP_200_SUCCESS.value)
+
+            if post_id:
+                response = get_tags_for_post(post_id[0])  # Fetch the tags for the specific post
+                return self.response(response, status.HTTP_200_SUCCESS.value)
 
 
         elif url["requested_resource"] == "Comments":
