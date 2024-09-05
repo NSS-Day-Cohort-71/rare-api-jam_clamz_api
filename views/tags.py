@@ -170,3 +170,25 @@ def get_tag_by_id(tag_id):
             response = None
 
         return json.dumps(response)
+    
+def delete_post_tags(post_id, tag_ids):
+    """Remove selected tags for a specific post in the PostTags join table"""
+
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        # Loop through each tag_id and delete it from the PostTags join table
+        for tag_id in tag_ids:
+            db_cursor.execute(
+                """
+                DELETE FROM PostTags
+                WHERE post_id = ? AND tag_id = ?
+                """,
+                (post_id, tag_id)
+            )
+
+        # Commit the changes
+        conn.commit()
+
+        # Return a success response
+        return json.dumps({"message": "Tags successfully removed from post."})
