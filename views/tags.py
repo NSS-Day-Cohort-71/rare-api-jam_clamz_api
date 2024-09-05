@@ -87,9 +87,6 @@ def get_all_tags():
 
     return serialized_tags
 
-import sqlite3
-import json
-
 def get_tags_for_post(post_id):
     """Fetches tags associated with a specific post from the PostTags join table"""
 
