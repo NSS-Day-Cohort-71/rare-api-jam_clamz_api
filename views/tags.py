@@ -13,15 +13,14 @@ def create_tag(tag):
             INSERT INTO Tags (label)
             VALUES (?)
             """,
-            (
-                tag["label"],
-            ),  # Ensure "tag" is a dictionary and "label" is a valid key
+            (tag["label"],),  # Ensure "tag" is a dictionary and "label" is a valid key
         )
 
         id = db_cursor.lastrowid
 
         return json.dumps({"id": id, "label": tag["label"]})
-    
+
+
 def edit_tag(tagId, data):
     with sqlite3.connect("./db.sqlite3") as conn:
         db_cursor = conn.cursor()
@@ -32,10 +31,30 @@ def edit_tag(tagId, data):
                 SET
                     label = ?
                 WHERE id = ?
-            """, 
-            (data["label"], tagId)
+            """,
+            (data["label"], tagId),
         )
 
         conn.commit()
 
-    return json.dumps({"message": "Tag updated successfully."}) 
+    return json.dumps({"message": "Tag updated successfully."})
+
+
+def delete_tag(tagId):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            DELETE FROM Tags
+            WHERE id = ?
+            """,
+            (tagId,),
+        )
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+
+    return True

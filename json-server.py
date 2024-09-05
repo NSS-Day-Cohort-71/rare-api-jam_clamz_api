@@ -24,7 +24,8 @@ from views import (
     delete_comment,
     get_comment_by_id,
     edit_comment,
-    edit_tag
+    edit_tag,
+    delete_tag,
 )
 
 
@@ -84,7 +85,7 @@ class JSONServer(HandleRequests):
 
         elif url["requested_resource"] == "Comments":
             post_id = url["query_params"].get("post_id")
-            pk = url['pk']
+            pk = url["pk"]
 
             if post_id:
                 # this ensures post_id is a single value
@@ -93,7 +94,7 @@ class JSONServer(HandleRequests):
 
                 response_body = get_comments_by_post_id(post_id)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
-            
+
             elif pk:
                 response_body = get_comment_by_id(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
@@ -211,6 +212,19 @@ class JSONServer(HandleRequests):
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
 
+        elif url["requested_resource"] == "Tags":
+            if pk != 0:
+                successfully_deleted = delete_tag(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+
+                return self.response(
+                    "Requested resource not found",
+                    status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
+                )
+
     def do_PUT(self):
         """Handle PUT requests"""
 
@@ -232,12 +246,12 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 response_body = edit_post(pk, request_body)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
-            
+
         elif url["requested_resource"] == "Comments":
             if pk != 0:
                 response_body = edit_comment(pk, request_body)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
-            
+
         elif url["requested_resource"] == "Tags":
             if pk != 0:
                 response_body = edit_tag(pk, request_body)
