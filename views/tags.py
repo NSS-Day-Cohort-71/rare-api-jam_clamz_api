@@ -142,3 +142,31 @@ def save_post_tags(post_id, tag_ids):
 
         # Return a success response
         return json.dumps({"message": "Tags successfully saved for post."})
+
+def get_tag_by_id(tag_id):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row  # This allows us to fetch rows as dictionaries
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+                SELECT 
+                    t.id, 
+                    t.label
+                FROM Tags t
+                WHERE t.id = ?
+            """,
+            (tag_id,),
+        )
+
+        row = db_cursor.fetchone()
+
+        if row:
+            response = {
+                "id": row["id"],
+                "label": row["label"]
+            }
+        else:
+            response = None
+
+        return json.dumps(response)

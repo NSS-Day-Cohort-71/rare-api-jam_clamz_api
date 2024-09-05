@@ -32,5 +32,6 @@ from .tags import (
     create_tag,
     get_all_tags,
     get_tags_for_post,
-    save_post_tags
+    save_post_tags,
+    get_tag_by_id
 )
