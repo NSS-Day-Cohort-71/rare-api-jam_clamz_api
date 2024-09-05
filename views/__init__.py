@@ -25,4 +25,12 @@ from .comments import (
     edit_comment,
 )
 
-from .tags import create_tag, edit_tag, delete_tag
+from .tags import (
+    create_tag, 
+    edit_tag, 
+    delete_tag,
+    create_tag,
+    get_all_tags,
+    get_tags_for_post,
+    save_post_tags
+)

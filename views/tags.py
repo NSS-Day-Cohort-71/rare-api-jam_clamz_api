@@ -58,3 +58,87 @@ def delete_tag(tagId):
         return False
 
     return True
+
+    
+def get_all_tags():
+    # Open a connection to the database
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute(
+            """
+        SELECT
+            *
+        FROM Tags c
+        ORDER BY c.label DESC;
+        """
+        )
+        query_results = db_cursor.fetchall()
+
+        # Initialize an empty list and then add each dictionary to it
+        tags = []
+        for row in query_results:
+            tags.append(dict(row))
+
+        # Serialize Python list to JSON encoded string
+        serialized_tags = json.dumps(tags)
+
+    return serialized_tags
+
+import sqlite3
+import json
+
+def get_tags_for_post(post_id):
+    """Fetches tags associated with a specific post from the PostTags join table"""
+
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the tags associated with the post
+        db_cursor.execute(
+            """
+            SELECT
+                t.id, t.label
+            FROM Tags t
+            JOIN PostTags pt ON t.id = pt.tag_id
+            WHERE pt.post_id = ?
+            """,
+            (post_id,)  # Pass post_id as a parameter to the query
+        )
+
+        query_results = db_cursor.fetchall()
+
+        # Initialize an empty list and then add each dictionary to it
+        tags = []
+        for row in query_results:
+            tags.append(dict(row))
+
+        # Serialize Python list to JSON encoded string
+        serialized_tags = json.dumps(tags)
+
+    return serialized_tags
+
+def save_post_tags(post_id, tag_ids):
+    """Saves selected tags for a specific post in the PostTags join table"""
+
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        # Loop through each tag_id and insert it into the PostTags join table
+        for tag_id in tag_ids:
+            db_cursor.execute(
+                """
+                INSERT INTO PostTags (post_id, tag_id)
+                VALUES (?, ?)
+                """,
+                (post_id, tag_id)
+            )
+
+        # Commit the changes
+        conn.commit()
+
+        # Return a success response
+        return json.dumps({"message": "Tags successfully saved for post."})

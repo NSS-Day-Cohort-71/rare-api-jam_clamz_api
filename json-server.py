@@ -26,6 +26,9 @@ from views import (
     edit_comment,
     edit_tag,
     delete_tag,
+    get_all_tags,
+    get_tags_for_post,
+    save_post_tags,
 )
 
 
@@ -82,6 +85,17 @@ class JSONServer(HandleRequests):
         elif url["requested_resource"] == "category":
             response_body = get_all_categories()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        
+        elif url["requested_resource"] == "tags":
+            response_body = get_all_tags()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        if url["requested_resource"] == "posttags":
+            post_id = url["query_params"].get("post_id", None)
+        if post_id:
+            response = get_tags_for_post(post_id[0])  # Fetch the tags for the specific post
+            return self.response(response, status.HTTP_200_SUCCESS.value)
+
 
         elif url["requested_resource"] == "Comments":
             post_id = url["query_params"].get("post_id")
@@ -106,7 +120,6 @@ class JSONServer(HandleRequests):
 
     def do_POST(self):
         """Handle POST requests"""
-
         url = self.parse_url(self.path)
 
         if url["requested_resource"] == "register":
@@ -153,6 +166,18 @@ class JSONServer(HandleRequests):
 
             response_body = create_tag(request_body)
             return self.response(response_body, status.HTTP_201_SUCCESS_CREATED.value)
+        
+        elif url["requested_resource"] == "posttags":
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            data = json.loads(request_body)
+
+            post_id = data.get("post_id")
+            tag_ids = data.get("tag_ids")
+
+            if post_id and tag_ids:
+                response = save_post_tags(post_id, tag_ids)  # Save tags for the specific post
+                return self.response(response, status.HTTP_201_SUCCESS_CREATED.value)
 
         elif url["requested_resource"] == "Comments":
             # Get the request body JSON for the new post
