@@ -29,7 +29,8 @@ from views import (
     get_all_tags,
     get_tags_for_post,
     save_post_tags,
-    get_tag_by_id
+    get_tag_by_id,
+    delete_post_tags
 )
 
 
@@ -261,6 +262,18 @@ class JSONServer(HandleRequests):
                     "Requested resource not found",
                     status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value,
                 )
+            
+        elif url["requested_resource"] == "posttags":
+            content_len = int(self.headers.get("content-length", 0))
+            request_body = self.rfile.read(content_len)
+            data = json.loads(request_body)
+
+            post_id = data.get("post_id")
+            tag_ids = data.get("tag_ids")
+
+            if post_id and tag_ids:
+                response = delete_post_tags(post_id, tag_ids)  # Remove tags for the specific post
+                return self.response(response, status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
 
     def do_PUT(self):
         """Handle PUT requests"""

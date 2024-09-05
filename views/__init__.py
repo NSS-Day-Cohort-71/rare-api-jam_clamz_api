@@ -33,5 +33,6 @@ from .tags import (
     get_all_tags,
     get_tags_for_post,
     save_post_tags,
-    get_tag_by_id
+    get_tag_by_id,
+    delete_post_tags
 )
